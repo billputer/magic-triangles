@@ -2,7 +2,7 @@ $(document).ready(function init() {
   var canvas = document.getElementById('easel'),
   stage = new createjs.Stage(canvas),
   initial_triangle_size = 400,
-  t2, t3, t4, t5;
+  t1, t2, t3, t4, t5;
   
   function createTriangle(stage, size, x, y) {
     var shape = new createjs.Shape(),
@@ -26,21 +26,23 @@ $(document).ready(function init() {
   }
   
   // t1 setup
+  // static triangle that never changes
   stage.addChild(createTriangle(stage, initial_triangle_size, 250, 250));
-  t1 = createTriangle(stage, initial_triangle_size, 250, 250);
-  stage.addChild(t1);
-  
+  t1 = []
+  t1.push(createTriangle(stage, initial_triangle_size, 250, 250));
+
   // t2 setup
   t2 = [];
   t2.push(createTriangle(stage, initial_triangle_size / 3, 250, 96));
 
   function t1_rotate() {
-    createjs.Tween.get(t1).to({rotation: 60}, 500)
+    $.each(t1, function(k, v) { stage.addChild(v); });
+    createjs.Tween.get(t1[0]).to({rotation: 60}, 500)
     .wait(500)
       .call(t2_rotate);
   }
   function t2_rotate() {
-    stage.addChild(t2[0]);
+    $.each(t2, function(k, v) { stage.addChild(v); });
     createjs.Tween.get(t2[0])
       .to({rotation: 60}, 500)
       .wait(500)
@@ -52,8 +54,8 @@ $(document).ready(function init() {
       .call(t1_reset);
   }
   function t1_reset() {
-    stage.removeChild(t2[0]);
-    createjs.Tween.get(t1)
+    $.each(t2, function(k, v) { stage.removeChild(v); });
+    createjs.Tween.get(t1[0])
       .wait(500)
       .to({rotation: 0}, 500)
       .wait(1000)
@@ -61,9 +63,8 @@ $(document).ready(function init() {
   }
   
   
-  // start tweening
+  // start the party
   t1_rotate();
-
   createjs.Ticker.setFPS(60);
   createjs.Ticker.addEventListener("tick", stage);
 
