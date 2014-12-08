@@ -7,7 +7,7 @@ $(document).ready(function init() {
   vertical_ratio = 0.866,
   t1, t2, t3, t4, t5;
   
-  function createTriangle(stage, size, x, y) {
+  function createTriangle(size, x, y) {
     var shape = new createjs.Shape(),
     g = shape.graphics,
     horizontal_offset = size / 2,
@@ -29,19 +29,19 @@ $(document).ready(function init() {
   
   // t1 setup
   // static triangle that never changes
-  stage.addChild(createTriangle(stage, initial_triangle_size, initial_triangle_x, initial_triangle_y));
+  stage.addChild(createTriangle(initial_triangle_size, initial_triangle_x, initial_triangle_y));
   t1 = []
-  t1.push(createTriangle(stage, initial_triangle_size, initial_triangle_x, initial_triangle_y));
+  t1.push(createTriangle(initial_triangle_size, initial_triangle_x, initial_triangle_y));
 
   // t2 setup
   t2 = [];
   var t2_height = initial_triangle_size * vertical_ratio / 3;
   // top
-  t2.push(createTriangle(stage, initial_triangle_size / 3, initial_triangle_x, initial_triangle_size * vertical_ratio - initial_triangle_y));
+  t2.push(createTriangle(initial_triangle_size / 3, initial_triangle_x, initial_triangle_size * vertical_ratio - initial_triangle_y));
   // bottom-left
-  t2.push(createTriangle(stage, initial_triangle_size / 3, initial_triangle_x - initial_triangle_size / 3, initial_triangle_y + (t2_height * 2 / 3)));
+  t2.push(createTriangle(initial_triangle_size / 3, initial_triangle_x - initial_triangle_size / 3, initial_triangle_y + (t2_height * 2 / 3)));
   // bottom-right
-  t2.push(createTriangle(stage, initial_triangle_size / 3, initial_triangle_x + initial_triangle_size / 3, initial_triangle_y + (t2_height * 2 / 3)));
+  t2.push(createTriangle(initial_triangle_size / 3, initial_triangle_x + initial_triangle_size / 3, initial_triangle_y + (t2_height * 2 / 3)));
 
   function remove_from_stage(child) {
     stage.removeChild(child);
