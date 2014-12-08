@@ -43,28 +43,34 @@ $(document).ready(function init() {
   // bottom-right
   t2.push(createTriangle(stage, initial_triangle_size / 3, initial_triangle_x + initial_triangle_size / 3, initial_triangle_y + (t2_height * 2 / 3)));
 
+  function remove_from_stage(child) {
+    stage.removeChild(child);
+  }
+
   function t1_rotate() {
     $.each(t1, function(k, v) { stage.addChild(v); });
     createjs.Tween.get(t1[0]).to({rotation: 60}, 500)
-    .wait(500)
+      .wait(500)
       .call(t2_rotate);
   }
   function t2_rotate() {
     $.each(t2, function(k, v) { stage.addChild(v); });
-    createjs.Tween.get(t2[0])
-      .to({rotation: 60}, 500)
-      .wait(500)
-      .call(t2_reset);
+    $.each(t2, function(k, v) {
+      createjs.Tween.get(v)
+        .to({rotation: 60}, 500);
+    });
+    createjs.Tween.get(t2[0]).wait(1000).call(t2_reset);
   }
   function t2_reset() {
-    createjs.Tween.get(t2[0])
-      .to({rotation: 0}, 500)
-      .call(t1_reset);
+    $.each(t2, function(k, v) {
+      createjs.Tween.get(v)
+        .to({rotation: 0}, 500)
+        .call(remove_from_stage, [v]);
+    });
+    createjs.Tween.get(t2[0]).wait(1000).call(t1_reset);
   }
   function t1_reset() {
-    $.each(t2, function(k, v) { stage.removeChild(v); });
     createjs.Tween.get(t1[0])
-      .wait(500)
       .to({rotation: 0}, 500)
       .wait(1000)
       .call(t1_rotate);
