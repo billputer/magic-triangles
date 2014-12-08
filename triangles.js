@@ -15,11 +15,12 @@ $(document).ready(function init() {
 
     shape.x = x;
     shape.y = y;
+    shape.upside_down = upside_down ? true : false;
 
     g.setStrokeStyle(1);
     g.beginStroke("black");
     
-    if (upside_down) {
+    if (shape.upside_down) {
       g.moveTo(0, 2 * vertical_offset);
       g.lineTo(-1 * horizontal_offset, -1 * vertical_offset);
       g.lineTo(horizontal_offset, -1 * vertical_offset);
@@ -71,8 +72,9 @@ $(document).ready(function init() {
   function t2_rotate() {
     $.each(t2, function(k, v) { stage.addChild(v); });
     $.each(t2, function(k, v) {
+      var direction = !v.upside_down ? 1 : -1;
       createjs.Tween.get(v)
-        .to({rotation: 60}, 500);
+        .to({rotation: direction * 60}, 500);
     });
     createjs.Tween.get(t2[0]).wait(1000).call(t2_reset);
   }
