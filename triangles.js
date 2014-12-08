@@ -45,7 +45,7 @@ $(document).ready(function init() {
   var t2_size = initial_triangle_size / 3;
   var t2_height = initial_triangle_size * vertical_ratio / 3;
   // top
-  t2.push(createTriangle(t2_size, initial_triangle_x, initial_triangle_size * vertical_ratio - initial_triangle_y));
+  t2.push(createTriangle(t2_size, initial_triangle_x, initial_triangle_y - (t2_height * 4 / 3)));
   // bottom-left
   t2.push(createTriangle(t2_size, initial_triangle_x - t2_size, initial_triangle_y + (t2_height * 2 / 3)));
   // bottom-right
@@ -56,7 +56,7 @@ $(document).ready(function init() {
   // top-right
   t2.push(createTriangle(t2_size, initial_triangle_x + t2_size, initial_triangle_y - (t2_height * 2 / 3), true));
   // bottom
-  t2.push(createTriangle(t2_size, initial_triangle_x, t2_height * 4 / 3 + initial_triangle_y, true));
+  t2.push(createTriangle(t2_size, initial_triangle_x, initial_triangle_y + (t2_height * 4 / 3), true));
 
   function remove_from_stage(child) {
     stage.removeChild(child);
