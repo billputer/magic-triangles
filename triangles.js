@@ -5,6 +5,7 @@ $(document).ready(function init() {
   initial_triangle_x = 250,
   initial_triangle_y = 250,
   vertical_ratio = 0.866,
+  rotation_speed = 400,
   t1, t2, t3, t4, t5;
   
   function createTriangle(size, x, y, upside_down) {
@@ -65,8 +66,8 @@ $(document).ready(function init() {
 
   function t1_rotate() {
     $.each(t1, function(k, v) { stage.addChild(v); });
-    createjs.Tween.get(t1[0]).to({rotation: 60}, 500)
-      .wait(500)
+    createjs.Tween.get(t1[0]).to({rotation: 60}, rotation_speed)
+      .wait(rotation_speed)
       .call(t2_rotate);
   }
   function t2_rotate() {
@@ -74,22 +75,22 @@ $(document).ready(function init() {
     $.each(t2, function(k, v) {
       var direction = !v.upside_down ? 1 : -1;
       createjs.Tween.get(v)
-        .to({rotation: direction * 60}, 500);
+        .to({rotation: direction * 60}, rotation_speed);
     });
-    createjs.Tween.get(t2[0]).wait(1000).call(t2_reset);
+    createjs.Tween.get(t2[0]).wait(rotation_speed * 2).call(t2_reset);
   }
   function t2_reset() {
     $.each(t2, function(k, v) {
       createjs.Tween.get(v)
-        .to({rotation: 0}, 500)
+        .to({rotation: 0}, rotation_speed)
         .call(remove_from_stage, [v]);
     });
-    createjs.Tween.get(t2[0]).wait(1000).call(t1_reset);
+    createjs.Tween.get(t2[0]).wait(rotation_speed * 2).call(t1_reset);
   }
   function t1_reset() {
     createjs.Tween.get(t1[0])
-      .to({rotation: 0}, 500)
-      .wait(1000)
+      .to({rotation: 0}, rotation_speed)
+      .wait(rotation_speed)
       .call(t1_rotate);
   }
   
