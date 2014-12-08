@@ -2,13 +2,15 @@ $(document).ready(function init() {
   var canvas = document.getElementById('easel'),
   stage = new createjs.Stage(canvas),
   initial_triangle_size = 400,
+  initial_triangle_x = 250,
+  initial_triangle_y = 250,
+  vertical_ratio = 0.866,
   t1, t2, t3, t4, t5;
   
   function createTriangle(stage, size, x, y) {
     var shape = new createjs.Shape(),
     g = shape.graphics,
     horizontal_offset = size / 2,
-    vertical_ratio = 0.866,
     vertical_offset = size * vertical_ratio / 3;
       
     g.setStrokeStyle(1);
@@ -27,13 +29,19 @@ $(document).ready(function init() {
   
   // t1 setup
   // static triangle that never changes
-  stage.addChild(createTriangle(stage, initial_triangle_size, 250, 250));
+  stage.addChild(createTriangle(stage, initial_triangle_size, initial_triangle_x, initial_triangle_y));
   t1 = []
-  t1.push(createTriangle(stage, initial_triangle_size, 250, 250));
+  t1.push(createTriangle(stage, initial_triangle_size, initial_triangle_x, initial_triangle_y));
 
   // t2 setup
   t2 = [];
-  t2.push(createTriangle(stage, initial_triangle_size / 3, 250, 96));
+  var t2_height = initial_triangle_size * vertical_ratio / 3;
+  // top
+  t2.push(createTriangle(stage, initial_triangle_size / 3, initial_triangle_x, initial_triangle_size * vertical_ratio - initial_triangle_y));
+  // bottom-left
+  t2.push(createTriangle(stage, initial_triangle_size / 3, initial_triangle_x - initial_triangle_size / 3, initial_triangle_y + (t2_height * 2 / 3)));
+  // bottom-right
+  t2.push(createTriangle(stage, initial_triangle_size / 3, initial_triangle_x + initial_triangle_size / 3, initial_triangle_y + (t2_height * 2 / 3)));
 
   function t1_rotate() {
     $.each(t1, function(k, v) { stage.addChild(v); });
