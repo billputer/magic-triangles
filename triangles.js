@@ -7,23 +7,30 @@ $(document).ready(function init() {
   vertical_ratio = 0.866,
   t1, t2, t3, t4, t5;
   
-  function createTriangle(size, x, y) {
+  function createTriangle(size, x, y, upside_down) {
     var shape = new createjs.Shape(),
     g = shape.graphics,
     horizontal_offset = size / 2,
     vertical_offset = size * vertical_ratio / 3;
-      
+
+    shape.x = x;
+    shape.y = y;
+
     g.setStrokeStyle(1);
     g.beginStroke("black");
     
-    g.moveTo(0, -2 * vertical_offset);
-    g.lineTo(-1 * horizontal_offset, vertical_offset);
-    g.lineTo(horizontal_offset, vertical_offset);
-    g.lineTo(0, -2 * vertical_offset);
-    
-    shape.x = x;
-    shape.y = y;
-  
+    if (upside_down) {
+      g.moveTo(0, 2 * vertical_offset);
+      g.lineTo(-1 * horizontal_offset, -1 * vertical_offset);
+      g.lineTo(horizontal_offset, -1 * vertical_offset);
+      g.lineTo(0, 2 * vertical_offset);
+    }
+    else {
+      g.moveTo(0, -2 * vertical_offset);
+      g.lineTo(-1 * horizontal_offset, vertical_offset);
+      g.lineTo(horizontal_offset, vertical_offset);
+      g.lineTo(0, -2 * vertical_offset);
+    }
     return shape;
   }
   
@@ -43,6 +50,13 @@ $(document).ready(function init() {
   t2.push(createTriangle(t2_size, initial_triangle_x - t2_size, initial_triangle_y + (t2_height * 2 / 3)));
   // bottom-right
   t2.push(createTriangle(t2_size, initial_triangle_x + t2_size, initial_triangle_y + (t2_height * 2 / 3)));
+  // upside-down triangles
+  // top-left
+  t2.push(createTriangle(t2_size, initial_triangle_x - t2_size, initial_triangle_y - (t2_height * 2 / 3), true));
+  // top-right
+  t2.push(createTriangle(t2_size, initial_triangle_x + t2_size, initial_triangle_y - (t2_height * 2 / 3), true));
+  // bottom
+  t2.push(createTriangle(t2_size, initial_triangle_x, t2_height * 4 / 3 + initial_triangle_y, true));
 
   function remove_from_stage(child) {
     stage.removeChild(child);
