@@ -5,7 +5,7 @@ $(document).ready(function init() {
   initial_triangle_x = 250,
   initial_triangle_y = 250,
   vertical_ratio = 0.866,
-  rotation_speed = 400,
+  rotation_speed = 280,
   baseTriangle;
   
   function createTriangle(size, x, y, upside_down) {
@@ -43,7 +43,7 @@ $(document).ready(function init() {
       stage.addChild(v);
       var direction = !v.upside_down ? 1 : -1;
       createjs.Tween.get(v)
-        .to({rotation: direction * 60}, rotation_speed);
+        .to({rotation: direction * 60}, rotation_speed, createjs.Ease.quadInOut);
       if (v.hasOwnProperty("children")){
         createjs.Tween.get(v)
                       .wait(rotation_speed * 2)
@@ -59,7 +59,7 @@ $(document).ready(function init() {
 
   function reset(triangle) {
     createjs.Tween.get(triangle)
-        .to({rotation: 0}, rotation_speed)
+        .to({rotation: 0}, rotation_speed, createjs.Ease.quadInOut)
         .call(remove_from_stage, [triangle]);
 
     if ( triangle.base ) {
