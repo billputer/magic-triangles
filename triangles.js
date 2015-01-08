@@ -6,6 +6,7 @@ $(document).ready(function init() {
   initial_triangle_y = 250,
   vertical_ratio = 0.866,
   rotation_speed = 400,
+  levels = [],
   t1, t2, t3, t4, t5;
   
   function createTriangle(size, x, y, upside_down) {
@@ -60,43 +61,67 @@ $(document).ready(function init() {
   // bottom
   t2.push(createTriangle(t2_size, initial_triangle_x, initial_triangle_y + (t2_height * 4 / 3), true));
 
+  // levels array setup
+  levels.push(t1);
+  levels.push(t2);
+  // levels.push(t3);
+  // levels.push(t4);
+  // levels.push(t5);
+
   function remove_from_stage(child) {
     stage.removeChild(child);
   }
 
-  function t1_rotate() {
-    $.each(t1, function(k, v) { stage.addChild(v); });
-    createjs.Tween.get(t1[0]).to({rotation: 60}, rotation_speed)
-      .wait(rotation_speed)
-      .call(t2_rotate);
-  }
-  function t2_rotate() {
-    $.each(t2, function(k, v) { stage.addChild(v); });
-    $.each(t2, function(k, v) {
+  function rotate(current_level_index) {
+    var next_function, next_level;
+    var current = levels[current_level_index];
+
+    $.each(current, function(k, v) { stage.addChild(v); });
+    $.each(current, function(k, v) {
       var direction = !v.upside_down ? 1 : -1;
       createjs.Tween.get(v)
         .to({rotation: direction * 60}, rotation_speed);
     });
-    createjs.Tween.get(t2[0]).wait(rotation_speed * 2).call(t2_reset);
+
+    if(current_level_index + 1 == levels.length) {
+      next_function = reset;
+      next_level = current_level_index;
+    }
+    else {
+      next_function = rotate;
+      next_level = current_level_index + 1;
+    }
+    createjs.Tween.get(current[0])
+                  .wait(rotation_speed * 2)
+                  .call(next_function, [next_level]);
   }
-  function t2_reset() {
-    $.each(t2, function(k, v) {
+
+  function reset(current_level_index) {
+    var next_function, next_level;
+    var current = levels[current_level_index];
+
+    $.each(current, function(k, v) {
       createjs.Tween.get(v)
         .to({rotation: 0}, rotation_speed)
         .call(remove_from_stage, [v]);
     });
-    createjs.Tween.get(t2[0]).wait(rotation_speed * 2).call(t1_reset);
+
+    if(current_level_index == 0) {
+      next_function = rotate;
+      next_level = current_level_index;
+    }
+    else {
+      next_function = reset;
+      next_level = current_level_index - 1;
+    }
+
+    createjs.Tween.get(current[0])
+                  .wait(rotation_speed * 2)
+                  .call(next_function, [next_level]);
   }
-  function t1_reset() {
-    createjs.Tween.get(t1[0])
-      .to({rotation: 0}, rotation_speed)
-      .wait(rotation_speed)
-      .call(t1_rotate);
-  }
-  
   
   // start the party
-  t1_rotate();
+  rotate(0);
   createjs.Ticker.setFPS(60);
   createjs.Ticker.addEventListener("tick", stage);
 
