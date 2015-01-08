@@ -88,38 +88,46 @@ $(document).ready(function init() {
                   .wait(rotation_speed * 2)
                   .call(next_function, [next_level]);
   }
-  
-  // t1 setup
-  // static triangle that never changes
-  stage.addChild(createTriangle(initial_triangle_size, initial_triangle_x, initial_triangle_y));
-  t1 = []
-  t1.push(createTriangle(initial_triangle_size, initial_triangle_x, initial_triangle_y));
 
-  // t2 setup
-  t2 = [];
-  var t2_size = initial_triangle_size / 3;
-  var t2_height = initial_triangle_size * vertical_ratio / 3;
-  // top
-  t2.push(createTriangle(t2_size, initial_triangle_x, initial_triangle_y - (t2_height * 4 / 3)));
-  // bottom-left
-  t2.push(createTriangle(t2_size, initial_triangle_x - t2_size, initial_triangle_y + (t2_height * 2 / 3)));
-  // bottom-right
-  t2.push(createTriangle(t2_size, initial_triangle_x + t2_size, initial_triangle_y + (t2_height * 2 / 3)));
-  // upside-down triangles
-  // top-left
-  t2.push(createTriangle(t2_size, initial_triangle_x - t2_size, initial_triangle_y - (t2_height * 2 / 3), true));
-  // top-right
-  t2.push(createTriangle(t2_size, initial_triangle_x + t2_size, initial_triangle_y - (t2_height * 2 / 3), true));
-  // bottom
-  t2.push(createTriangle(t2_size, initial_triangle_x, initial_triangle_y + (t2_height * 4 / 3), true));
+  function drawSubTriangles(x, y, size){
+    var arr = [];
+    var height = size * vertical_ratio;
 
-  // levels array setup
-  levels.push(t1);
-  levels.push(t2);
-  // levels.push(t3);
-  // levels.push(t4);
-  // levels.push(t5);
+    // top
+    arr.push(createTriangle(size, x, y - (height * 4 / 3)));
+    // bottom-left
+    arr.push(createTriangle(size, x - size, y + (height * 2 / 3)));
+    // bottom-right
+    arr.push(createTriangle(size, x + size, y + (height * 2 / 3)));
+    // upside-down triangles
+    // top-left
+    arr.push(createTriangle(size, x - size, y - (height * 2 / 3), true));
+    // top-right
+    arr.push(createTriangle(size, x + size, y - (height * 2 / 3), true));
+    // bottom
+    arr.push(createTriangle(size, x, y + (height * 4 / 3), true));
+    return arr;
+  }
 
+  function setup() {
+    // t1 setup
+    // static triangle that never changes
+    stage.addChild(createTriangle(initial_triangle_size, initial_triangle_x, initial_triangle_y));
+    t1 = []
+    t1.push(createTriangle(initial_triangle_size, initial_triangle_x, initial_triangle_y));
+
+    // t2 setup
+    t2 = drawSubTriangles(initial_triangle_x, initial_triangle_y, initial_triangle_size / 3);
+
+    // levels array setup
+    levels.push(t1);
+    levels.push(t2);
+    // levels.push(t3);
+    // levels.push(t4);
+    // levels.push(t5);
+  }
+
+  setup();
   // start the party
   rotate(0);
   createjs.Ticker.setFPS(60);
