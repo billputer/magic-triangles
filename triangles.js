@@ -6,8 +6,7 @@ $(document).ready(function init() {
   initial_triangle_y = 250,
   vertical_ratio = 0.866,
   rotation_speed = 400,
-  levels = [],
-  t1, t2, t3, t4, t5;
+  baseTriangle;
   
   function createTriangle(size, x, y, upside_down) {
     var shape = new createjs.Shape(),
@@ -17,6 +16,7 @@ $(document).ready(function init() {
 
     shape.x = x;
     shape.y = y;
+    shape.size = size;
     shape.upside_down = upside_down ? true : false;
 
     g.setStrokeStyle(1);
@@ -89,47 +89,44 @@ $(document).ready(function init() {
                   .call(next_function, [next_level]);
   }
 
-  function drawSubTriangles(x, y, size){
-    var arr = [];
+  function createSubTriangles(base, x, y, size, depth){
+    //console.log([x, y, size, depth]);
+    base.children = [];
     var height = size * vertical_ratio;
 
     // top
-    arr.push(createTriangle(size, x, y - (height * 4 / 3)));
+    base.children.push(createTriangle(size, x, y - (height * 4 / 3)));
     // bottom-left
-    arr.push(createTriangle(size, x - size, y + (height * 2 / 3)));
+    base.children.push(createTriangle(size, x - size, y + (height * 2 / 3)));
     // bottom-right
-    arr.push(createTriangle(size, x + size, y + (height * 2 / 3)));
+    base.children.push(createTriangle(size, x + size, y + (height * 2 / 3)));
     // upside-down triangles
     // top-left
-    arr.push(createTriangle(size, x - size, y - (height * 2 / 3), true));
+    base.children.push(createTriangle(size, x - size, y - (height * 2 / 3), true));
     // top-right
-    arr.push(createTriangle(size, x + size, y - (height * 2 / 3), true));
+    base.children.push(createTriangle(size, x + size, y - (height * 2 / 3), true));
     // bottom
-    arr.push(createTriangle(size, x, y + (height * 4 / 3), true));
-    return arr;
+    base.children.push(createTriangle(size, x, y + (height * 4 / 3), true));
+
+    // do we create sub triangles of the sub-triangles?
+    if (depth < 2) {
+      $.each(base.children,  function(i, t) {
+        createSubTriangles(t, t.x, t.y, t.size / 3, depth + 1);
+      });
+    }
   }
 
   function setup() {
-    // t1 setup
     // static triangle that never changes
     stage.addChild(createTriangle(initial_triangle_size, initial_triangle_x, initial_triangle_y));
-    t1 = []
-    t1.push(createTriangle(initial_triangle_size, initial_triangle_x, initial_triangle_y));
-
-    // t2 setup
-    t2 = drawSubTriangles(initial_triangle_x, initial_triangle_y, initial_triangle_size / 3);
-
-    // levels array setup
-    levels.push(t1);
-    levels.push(t2);
-    // levels.push(t3);
-    // levels.push(t4);
-    // levels.push(t5);
+    baseTriangle = createTriangle(initial_triangle_size, initial_triangle_x, initial_triangle_y);
+    createSubTriangles(baseTriangle, initial_triangle_x, initial_triangle_y, initial_triangle_size / 3, 0);
+    console.log(baseTriangle);
   }
 
   setup();
   // start the party
-  rotate(0);
+  //rotate(0);
   createjs.Ticker.setFPS(60);
   createjs.Ticker.addEventListener("tick", stage);
 
