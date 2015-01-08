@@ -1,11 +1,11 @@
 $(document).ready(function init() {
   var canvas = document.getElementById('easel'),
   stage = new createjs.Stage(canvas),
-  initial_triangle_size = 400,
-  initial_triangle_x = 250,
-  initial_triangle_y = 250,
+  initial_triangle_size = canvas.width * 0.8,
+  initial_triangle_x = canvas.width / 2,
+  initial_triangle_y = canvas.height / 2,
   vertical_ratio = 0.866,
-  rotation_speed = 280,
+  rotation_speed = 330,
   baseTriangle;
   
   function createTriangle(size, x, y, upside_down) {
@@ -69,7 +69,6 @@ $(document).ready(function init() {
     }
 
     if ( triangle.iAmTheRoot ) {
-      console.log(triangle);
       createjs.Tween.get(triangle.base)
                     .wait(rotation_speed * 2)
                     .call(rotate, [[triangle]]);
