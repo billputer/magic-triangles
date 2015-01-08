@@ -41,28 +41,18 @@ $(document).ready(function init() {
     stage.removeChild(child);
   }
 
-  function rotate(current_level_index) {
-    var next_function, next_level;
-    var current = levels[current_level_index];
-
-    $.each(current, function(k, v) { stage.addChild(v); });
-    $.each(current, function(k, v) {
+  function rotate(triangles) {
+    $.each(triangles, function(k, v) {
+      stage.addChild(v);
       var direction = !v.upside_down ? 1 : -1;
       createjs.Tween.get(v)
         .to({rotation: direction * 60}, rotation_speed);
+      if (v.hasOwnProperty("children")){
+        createjs.Tween.get(v)
+                      .wait(rotation_speed * 2)
+                      .call(rotate, [v.children]);
+      }
     });
-
-    if(current_level_index + 1 == levels.length) {
-      next_function = reset;
-      next_level = current_level_index;
-    }
-    else {
-      next_function = rotate;
-      next_level = current_level_index + 1;
-    }
-    createjs.Tween.get(current[0])
-                  .wait(rotation_speed * 2)
-                  .call(next_function, [next_level]);
   }
 
   function reset(current_level_index) {
@@ -90,7 +80,6 @@ $(document).ready(function init() {
   }
 
   function createSubTriangles(base, x, y, size, depth){
-    //console.log([x, y, size, depth]);
     base.children = [];
     var height = size * vertical_ratio;
 
@@ -109,7 +98,7 @@ $(document).ready(function init() {
     base.children.push(createTriangle(size, x, y + (height * 4 / 3), true));
 
     // do we create sub triangles of the sub-triangles?
-    if (depth < 2) {
+    if (depth < 3) {
       $.each(base.children,  function(i, t) {
         createSubTriangles(t, t.x, t.y, t.size / 3, depth + 1);
       });
@@ -126,7 +115,7 @@ $(document).ready(function init() {
 
   setup();
   // start the party
-  //rotate(0);
+  rotate([baseTriangle]);
   createjs.Ticker.setFPS(60);
   createjs.Ticker.addEventListener("tick", stage);
 
