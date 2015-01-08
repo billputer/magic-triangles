@@ -36,37 +36,6 @@ $(document).ready(function init() {
     }
     return shape;
   }
-  
-  // t1 setup
-  // static triangle that never changes
-  stage.addChild(createTriangle(initial_triangle_size, initial_triangle_x, initial_triangle_y));
-  t1 = []
-  t1.push(createTriangle(initial_triangle_size, initial_triangle_x, initial_triangle_y));
-
-  // t2 setup
-  t2 = [];
-  var t2_size = initial_triangle_size / 3;
-  var t2_height = initial_triangle_size * vertical_ratio / 3;
-  // top
-  t2.push(createTriangle(t2_size, initial_triangle_x, initial_triangle_y - (t2_height * 4 / 3)));
-  // bottom-left
-  t2.push(createTriangle(t2_size, initial_triangle_x - t2_size, initial_triangle_y + (t2_height * 2 / 3)));
-  // bottom-right
-  t2.push(createTriangle(t2_size, initial_triangle_x + t2_size, initial_triangle_y + (t2_height * 2 / 3)));
-  // upside-down triangles
-  // top-left
-  t2.push(createTriangle(t2_size, initial_triangle_x - t2_size, initial_triangle_y - (t2_height * 2 / 3), true));
-  // top-right
-  t2.push(createTriangle(t2_size, initial_triangle_x + t2_size, initial_triangle_y - (t2_height * 2 / 3), true));
-  // bottom
-  t2.push(createTriangle(t2_size, initial_triangle_x, initial_triangle_y + (t2_height * 4 / 3), true));
-
-  // levels array setup
-  levels.push(t1);
-  levels.push(t2);
-  // levels.push(t3);
-  // levels.push(t4);
-  // levels.push(t5);
 
   function remove_from_stage(child) {
     stage.removeChild(child);
@@ -120,6 +89,37 @@ $(document).ready(function init() {
                   .call(next_function, [next_level]);
   }
   
+  // t1 setup
+  // static triangle that never changes
+  stage.addChild(createTriangle(initial_triangle_size, initial_triangle_x, initial_triangle_y));
+  t1 = []
+  t1.push(createTriangle(initial_triangle_size, initial_triangle_x, initial_triangle_y));
+
+  // t2 setup
+  t2 = [];
+  var t2_size = initial_triangle_size / 3;
+  var t2_height = initial_triangle_size * vertical_ratio / 3;
+  // top
+  t2.push(createTriangle(t2_size, initial_triangle_x, initial_triangle_y - (t2_height * 4 / 3)));
+  // bottom-left
+  t2.push(createTriangle(t2_size, initial_triangle_x - t2_size, initial_triangle_y + (t2_height * 2 / 3)));
+  // bottom-right
+  t2.push(createTriangle(t2_size, initial_triangle_x + t2_size, initial_triangle_y + (t2_height * 2 / 3)));
+  // upside-down triangles
+  // top-left
+  t2.push(createTriangle(t2_size, initial_triangle_x - t2_size, initial_triangle_y - (t2_height * 2 / 3), true));
+  // top-right
+  t2.push(createTriangle(t2_size, initial_triangle_x + t2_size, initial_triangle_y - (t2_height * 2 / 3), true));
+  // bottom
+  t2.push(createTriangle(t2_size, initial_triangle_x, initial_triangle_y + (t2_height * 4 / 3), true));
+
+  // levels array setup
+  levels.push(t1);
+  levels.push(t2);
+  // levels.push(t3);
+  // levels.push(t4);
+  // levels.push(t5);
+
   // start the party
   rotate(0);
   createjs.Ticker.setFPS(60);
