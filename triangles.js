@@ -19,21 +19,18 @@ $(document).ready(function init() {
     shape.size = size;
     shape.upside_down = upside_down ? true : false;
 
+    if (upside_down) {
+      vertical_offset = vertical_offset * -1;
+    }
+
     g.setStrokeStyle(1);
     g.beginStroke("black");
     
-    if (shape.upside_down) {
-      g.moveTo(0, 2 * vertical_offset);
-      g.lineTo(-1 * horizontal_offset, -1 * vertical_offset);
-      g.lineTo(horizontal_offset, -1 * vertical_offset);
-      g.lineTo(0, 2 * vertical_offset);
-    }
-    else {
-      g.moveTo(0, -2 * vertical_offset);
-      g.lineTo(-1 * horizontal_offset, vertical_offset);
-      g.lineTo(horizontal_offset, vertical_offset);
-      g.lineTo(0, -2 * vertical_offset);
-    }
+    g.moveTo(0, -2 * vertical_offset);
+    g.lineTo(-1 * horizontal_offset, vertical_offset);
+    g.lineTo(horizontal_offset, vertical_offset);
+    g.lineTo(0, -2 * vertical_offset);
+
     return shape;
   }
 
