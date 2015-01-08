@@ -49,31 +49,31 @@ $(document).ready(function init() {
                       .wait(rotation_speed * 2)
                       .call(rotate, [v.children]);
       }
-    });
+      else {
+        createjs.Tween.get(v)
+                      .wait(rotation_speed * 2)
+                      .call(reset, [v]);
+      }
+    }); 
   }
 
-  function reset(current_level_index) {
-    var next_function, next_level;
-    var current = levels[current_level_index];
-
-    $.each(current, function(k, v) {
-      createjs.Tween.get(v)
+  function reset(triangle) {
+    createjs.Tween.get(triangle)
         .to({rotation: 0}, rotation_speed)
-        .call(remove_from_stage, [v]);
-    });
+        .call(remove_from_stage, [triangle]);
 
-    if(current_level_index == 0) {
-      next_function = rotate;
-      next_level = current_level_index;
-    }
-    else {
-      next_function = reset;
-      next_level = current_level_index - 1;
+    if ( triangle.base ) {
+      createjs.Tween.get(triangle.base)
+                    .wait(rotation_speed * 2)
+                    .call(reset, [triangle.base]);
     }
 
-    createjs.Tween.get(current[0])
-                  .wait(rotation_speed * 2)
-                  .call(next_function, [next_level]);
+    if ( triangle.iAmTheRoot ) {
+      console.log(triangle);
+      createjs.Tween.get(triangle.base)
+                    .wait(rotation_speed * 2)
+                    .call(rotate, [[triangle]]);
+    }
   }
 
   function createSubTriangles(base, x, y, size, depth){
@@ -94,8 +94,12 @@ $(document).ready(function init() {
     // bottom
     base.children.push(createTriangle(size, x, y + (height * 4 / 3), true));
 
+    // only the first child has a reference to it's base
+    // this prevents multiple children from calling reset on their base
+    base.children[0].base = base;
+
     // do we create sub triangles of the sub-triangles?
-    if (depth < 3) {
+    if (depth < 4) {
       $.each(base.children,  function(i, t) {
         createSubTriangles(t, t.x, t.y, t.size / 3, depth + 1);
       });
@@ -106,8 +110,8 @@ $(document).ready(function init() {
     // static triangle that never changes
     stage.addChild(createTriangle(initial_triangle_size, initial_triangle_x, initial_triangle_y));
     baseTriangle = createTriangle(initial_triangle_size, initial_triangle_x, initial_triangle_y);
-    createSubTriangles(baseTriangle, initial_triangle_x, initial_triangle_y, initial_triangle_size / 3, 0);
-    console.log(baseTriangle);
+    baseTriangle.iAmTheRoot = true;
+    createSubTriangles(baseTriangle, initial_triangle_x, initial_triangle_y, initial_triangle_size / 3, 1);
   }
 
   setup();
