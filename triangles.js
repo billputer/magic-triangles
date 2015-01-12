@@ -5,9 +5,8 @@ $(document).ready(function init() {
   initial_triangle_x = canvas.width / 2,
   initial_triangle_y = canvas.height / 2,
   vertical_ratio = 0.866,
-  rotation_speed = 330,
-  baseTriangle;
-  
+  rotation_speed = 330;
+
   function createTriangle(size, x, y, upside_down) {
     var shape = new createjs.Shape(),
     g = shape.graphics,
@@ -62,44 +61,45 @@ $(document).ready(function init() {
         .to({rotation: 0}, rotation_speed, createjs.Ease.quadInOut)
         .call(remove_from_stage, [triangle]);
 
-    if ( triangle.base ) {
-      createjs.Tween.get(triangle.base)
+    if ( triangle.t_parent ) {
+      console.log(triangle);
+      createjs.Tween.get(triangle.t_parent)
                     .wait(rotation_speed * 2)
-                    .call(reset, [triangle.base]);
+                    .call(reset, [triangle.t_parent]);
     }
 
     if ( triangle.iAmTheRoot ) {
-      createjs.Tween.get(triangle.base)
+      createjs.Tween.get(triangle.t_parent)
                     .wait(rotation_speed * 2)
                     .call(rotate, [[triangle]]);
     }
   }
 
-  function createSubTriangles(base, x, y, size, depth){
-    base.children = [];
+  function createSubTriangles(parent, x, y, size, depth){
+    parent.children = [];
     var height = size * vertical_ratio;
 
     // top
-    base.children.push(createTriangle(size, x, y - (height * 4 / 3)));
+    parent.children.push(createTriangle(size, x, y - (height * 4 / 3)));
     // bottom-left
-    base.children.push(createTriangle(size, x - size, y + (height * 2 / 3)));
+    parent.children.push(createTriangle(size, x - size, y + (height * 2 / 3)));
     // bottom-right
-    base.children.push(createTriangle(size, x + size, y + (height * 2 / 3)));
+    parent.children.push(createTriangle(size, x + size, y + (height * 2 / 3)));
     // upside-down triangles
     // top-left
-    base.children.push(createTriangle(size, x - size, y - (height * 2 / 3), true));
+    parent.children.push(createTriangle(size, x - size, y - (height * 2 / 3), true));
     // top-right
-    base.children.push(createTriangle(size, x + size, y - (height * 2 / 3), true));
+    parent.children.push(createTriangle(size, x + size, y - (height * 2 / 3), true));
     // bottom
-    base.children.push(createTriangle(size, x, y + (height * 4 / 3), true));
+    parent.children.push(createTriangle(size, x, y + (height * 4 / 3), true));
 
-    // only the first child has a reference to it's base
-    // this prevents multiple children from calling reset on their base
-    base.children[0].base = base;
+    // only the first child has a reference to it's parent
+    // this prevents multiple children from calling reset on their parent
+    parent.children[0].t_parent = parent;
 
     // do we create sub triangles of the sub-triangles?
     if (depth < 4) {
-      $.each(base.children,  function(i, t) {
+      $.each(parent.children,  function(i, t) {
         createSubTriangles(t, t.x, t.y, t.size / 3, depth + 1);
       });
     }
@@ -108,12 +108,12 @@ $(document).ready(function init() {
   function setupAndAnimate() {
     // static triangle that never changes
     stage.addChild(createTriangle(initial_triangle_size, initial_triangle_x, initial_triangle_y));
-    baseTriangle = createTriangle(initial_triangle_size, initial_triangle_x, initial_triangle_y);
-    baseTriangle.iAmTheRoot = true;
-    createSubTriangles(baseTriangle, initial_triangle_x, initial_triangle_y, initial_triangle_size / 3, 1);
+    rootTriangle = createTriangle(initial_triangle_size, initial_triangle_x, initial_triangle_y);
+    rootTriangle.iAmTheRoot = true;
+    createSubTriangles(rootTriangle, initial_triangle_x, initial_triangle_y, initial_triangle_size / 3, 1);
 
     // start the party
-    rotate([baseTriangle]);
+    rotate([rootTriangle]);
     createjs.Ticker.setFPS(60);
     createjs.Ticker.addEventListener("tick", stage);
   }
