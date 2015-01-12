@@ -97,7 +97,7 @@ $(document).ready(function init() {
     // this prevents multiple children from calling reset on their parent
     parent.children[0].t_parent = parent;
 
-    // do we create sub triangles of the sub-triangles?
+    // create subtriangles up to a certain depth
     if (depth < 4) {
       $.each(parent.children,  function(i, t) {
         createSubTriangles(t, t.x, t.y, t.size / 3, depth + 1);
