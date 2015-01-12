@@ -1,5 +1,5 @@
 $(document).ready(function init() {
-  var canvas = document.getElementById('easel'),
+  var canvas = document.getElementById('magic-triangles'),
   stage = new createjs.Stage(canvas),
   initial_triangle_size = canvas.width * 0.8,
   initial_triangle_x = canvas.width / 2,
@@ -105,20 +105,20 @@ $(document).ready(function init() {
     }
   }
 
-  function setup() {
+  function setupAndAnimate() {
     // static triangle that never changes
     stage.addChild(createTriangle(initial_triangle_size, initial_triangle_x, initial_triangle_y));
     baseTriangle = createTriangle(initial_triangle_size, initial_triangle_x, initial_triangle_y);
     baseTriangle.iAmTheRoot = true;
     createSubTriangles(baseTriangle, initial_triangle_x, initial_triangle_y, initial_triangle_size / 3, 1);
+
+    // start the party
+    rotate([baseTriangle]);
+    createjs.Ticker.setFPS(60);
+    createjs.Ticker.addEventListener("tick", stage);
   }
 
-  setup();
-  // start the party
-  rotate([baseTriangle]);
-  createjs.Ticker.setFPS(60);
-  createjs.Ticker.addEventListener("tick", stage);
-
+  setupAndAnimate();
 })
 
 
