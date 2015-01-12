@@ -20,7 +20,7 @@ $(document).ready(function init() {
     // start the party
     createjs.Ticker.setFPS(60);
     createjs.Ticker.addEventListener("tick", stage);
-    rotate([rootTriangle]);
+    setTimeout(rotate, 1000, [rootTriangle]);
   }
 
   /**
