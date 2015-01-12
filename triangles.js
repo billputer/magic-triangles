@@ -7,6 +7,25 @@ $(document).ready(function init() {
   vertical_ratio = 0.866,
   rotation_speed = 330;
 
+  /**
+   * Create triangle objects and then start animation
+   */
+  function setupAndAnimate() {
+    // static triangle that never changes
+    stage.addChild(createTriangle(initial_triangle_size, initial_triangle_x, initial_triangle_y));
+    rootTriangle = createTriangle(initial_triangle_size, initial_triangle_x, initial_triangle_y);
+    rootTriangle.iAmTheRoot = true;
+    createSubTriangles(rootTriangle, initial_triangle_x, initial_triangle_y, initial_triangle_size / 3, 1);
+
+    // start the party
+    createjs.Ticker.setFPS(60);
+    createjs.Ticker.addEventListener("tick", stage);
+    rotate([rootTriangle]);
+  }
+
+  /**
+   * Create a triangle using an EaselJS Shape
+   */
   function createTriangle(size, x, y, upside_down) {
     var shape = new createjs.Shape(),
     g = shape.graphics,
@@ -33,48 +52,9 @@ $(document).ready(function init() {
     return shape;
   }
 
-  function remove_from_stage(child) {
-    stage.removeChild(child);
-  }
-
-  function rotate(triangles) {
-    $.each(triangles, function(k, v) {
-      stage.addChild(v);
-      var direction = !v.upside_down ? 1 : -1;
-      createjs.Tween.get(v)
-        .to({rotation: direction * 60}, rotation_speed, createjs.Ease.quadInOut);
-      if (v.hasOwnProperty("children")){
-        createjs.Tween.get(v)
-                      .wait(rotation_speed * 2)
-                      .call(rotate, [v.children]);
-      }
-      else {
-        createjs.Tween.get(v)
-                      .wait(rotation_speed * 2)
-                      .call(reset, [v]);
-      }
-    }); 
-  }
-
-  function reset(triangle) {
-    createjs.Tween.get(triangle)
-        .to({rotation: 0}, rotation_speed, createjs.Ease.quadInOut)
-        .call(remove_from_stage, [triangle]);
-
-    if ( triangle.t_parent ) {
-      console.log(triangle);
-      createjs.Tween.get(triangle.t_parent)
-                    .wait(rotation_speed * 2)
-                    .call(reset, [triangle.t_parent]);
-    }
-
-    if ( triangle.iAmTheRoot ) {
-      createjs.Tween.get(triangle.t_parent)
-                    .wait(rotation_speed * 2)
-                    .call(rotate, [[triangle]]);
-    }
-  }
-
+  /**
+   * Create sub-triangles of parent triangle up to a certain depth
+   */
   function createSubTriangles(parent, x, y, size, depth){
     parent.children = [];
     var height = size * vertical_ratio;
@@ -105,17 +85,52 @@ $(document).ready(function init() {
     }
   }
 
-  function setupAndAnimate() {
-    // static triangle that never changes
-    stage.addChild(createTriangle(initial_triangle_size, initial_triangle_x, initial_triangle_y));
-    rootTriangle = createTriangle(initial_triangle_size, initial_triangle_x, initial_triangle_y);
-    rootTriangle.iAmTheRoot = true;
-    createSubTriangles(rootTriangle, initial_triangle_x, initial_triangle_y, initial_triangle_size / 3, 1);
+  /**
+   * Rotate an array of triangles, then rotate it's children
+   */
+  function rotate(triangles) {
+    $.each(triangles, function(k, v) {
+      stage.addChild(v);
+      var direction = !v.upside_down ? 1 : -1;
+      createjs.Tween.get(v)
+        .to({rotation: direction * 60}, rotation_speed, createjs.Ease.quadInOut);
+      if (v.hasOwnProperty("children")){
+        createjs.Tween.get(v)
+                      .wait(rotation_speed * 2)
+                      .call(rotate, [v.children]);
+      }
+      else {
+        createjs.Tween.get(v)
+                      .wait(rotation_speed * 2)
+                      .call(reset, [v]);
+      }
+    }); 
+  }
 
-    // start the party
-    rotate([rootTriangle]);
-    createjs.Ticker.setFPS(60);
-    createjs.Ticker.addEventListener("tick", stage);
+  /**
+   * Reverse triangle rotation, then remove from stage
+   */
+  function reset(triangle) {
+    createjs.Tween.get(triangle)
+        .to({rotation: 0}, rotation_speed, createjs.Ease.quadInOut)
+        .call(remove_from_stage, [triangle]);
+
+    if ( triangle.t_parent ) {
+      console.log(triangle);
+      createjs.Tween.get(triangle.t_parent)
+                    .wait(rotation_speed * 2)
+                    .call(reset, [triangle.t_parent]);
+    }
+
+    if ( triangle.iAmTheRoot ) {
+      createjs.Tween.get(triangle.t_parent)
+                    .wait(rotation_speed * 2)
+                    .call(rotate, [[triangle]]);
+    }
+  }
+
+  function remove_from_stage(child) {
+    stage.removeChild(child);
   }
 
   setupAndAnimate();
